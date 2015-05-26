@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<definitions name="AutoCheck"
+        targetNamespace="http://autocheck.soacourse.unsw.edu.au"
+        xmlns:tns="http://autocheck.soacourse.unsw.edu.au"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:gs="http://greenslip.soacourse.unsw.edu.au"
+        xmlns:ps="http://pinkslip.soacourse.unsw.edu.au"
+        >
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of types participating in this BPEL process 
+     The BPEL Designer will generate default request and response types
+     but you can define or import any XML Schema type and use them as part 
+     of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+<!-- <types>
+        <schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+                targetNamespace="http://autocheck.soacourse.unsw.edu.au" 
+                xmlns="http://www.w3.org/2001/XMLSchema">
+
+            <element name="AutoCheckRequest">
+                <complexType>
+                    <sequence>
+                        <element name="input" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="AutoCheckResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+    </types>
+-->
+				<types>
+					 <schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+                targetNamespace="http://autocheck.soacourse.unsw.edu.au" 
+                xmlns="http://www.w3.org/2001/XMLSchema">
+
+            <element name="AutoCheckRequest">
+                <complexType>
+                    <sequence>
+                         <element name="LastName" nillable="false" type="string"/>
+							           <element name="FirstName" nillable="false" type="string"/>
+							           <element name="RegoNumber" nillable="false" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="AutoCheckResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+    </types>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+
+
+    <message name="AutoCheckRequestMessage">
+        <part name="parameters" element="tns:AutoCheckRequest"/>
+    </message>
+    <message name="AutoCheckResponseMessage">
+        <part name="parameters" element="tns:AutoCheckResponse"/>
+    </message>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+
+  
+    <portType name="AutoCheck">
+        <operation name="AutoCheck">
+            <input  message="tns:AutoCheckRequestMessage" />
+            <output message="tns:AutoCheckResponseMessage"/>
+        </operation>
+    </portType>
+
+ 
+ 	<import namespace="http://greenslip.soacourse.unsw.edu.au"
+		location="BPELGreenSlipService.wsdl" />
+  
+   	<import namespace="http://pinkslip.soacourse.unsw.edu.au"
+		location="BPELPinkSlipService.wsdl" />
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+
+
+    <plnk:partnerLinkType name="AutoCheckLinkType">
+        <plnk:role name="AutoCheckProvider" portType="tns:AutoCheck"/>
+    </plnk:partnerLinkType>
+
+    <plnk:partnerLinkType name="GSLinkType">
+        <plnk:role name="gsProvider" portType="gs:BPELGreenSlipService"/>
+    </plnk:partnerLinkType>
+
+		<plnk:partnerLinkType name="PSLinkType">
+        <plnk:role name="psProvider" portType="ps:BPELPinkSlipService"/>
+    </plnk:partnerLinkType>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     BINDING DEFINITION - Defines the message format and protocol details
+     for a web service.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+ 
+    <binding name="AutoCheckBinding" type="tns:AutoCheck">
+    	<soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http" />
+    	<operation name="AutoCheck">
+    		<soap:operation
+    			soapAction="http://autocheck.soacourse.unsw.edu.au/AutoCheck" />
+    		<input>
+    			<soap:body use="literal" />
+    		</input>
+    		<output>
+    			<soap:body use="literal" />
+    		</output>
+    	</operation>
+    </binding>
+
+
+    <binding name="GSCheckBinding" type="gs:BPELGreenSlipService">
+    	<soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http" />
+    	<operation name="GSCheck">
+    		<soap:operation
+    			soapAction="http://greenslip.soacourse.unsw.edu.au/GSCheck" />
+    		<input>
+    			<soap:body use="literal" />
+    		</input>
+    		<output>
+    			<soap:body use="literal" />
+    		</output>
+    		<fault name="checkFault">
+	      	<soap:fault name="checkFault" use="literal"></soap:fault>
+	      </fault>
+    	</operation>
+    </binding>
+
+    <binding name="PSCheckBinding" type="ps:BPELPinkSlipService">
+    	<soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http" />
+    	<operation name="PSCheck">
+    		<soap:operation
+    			soapAction="http://pinkslip.soacourse.unsw.edu.au/PSCheck"/>
+    		<input>
+    			<soap:body use="literal" />
+    		</input>
+    		<output>
+    			<soap:body use="literal" />
+    		</output>
+    	</operation>
+    	
+    	<operation name="VehicleAge">
+	      <soap:operation
+	        soapAction="http://pinkslip.soacourse.unsw.edu.au/VehicleAge"/>
+	      <input>
+	        <soap:body use="literal"/>
+	      </input>
+	      <output>
+	        <soap:body use="literal"/>
+	      </output>
+	     </operation>
+    </binding>
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="AutoCheckService">
+    	<port name="AutoCheckPort" binding="tns:AutoCheckBinding">
+    		<soap:address location="http://localhost:6060/ode/processes/AutoCheck" />
+    	</port>
+    </service>
+</definitions>
