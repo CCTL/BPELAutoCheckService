@@ -133,7 +133,27 @@
                  portType="gs:BPELGreenSlipService"
                  operation="GSCheck"
                  inputVariable="GSCheckInput"
-                 outputVariable="GSCheckOutput"/>
+                 outputVariable="GSCheckOutput">
+            <bpel:catch faultName="gs:checkFault" faultVariable="GSCheckFault" faultMessageType="gs:GSCheckFaultMsg"><bpel:sequence><bpel:documentation xml:lang="English (United States)"></bpel:documentation><bpel:assign validate="no" name="setError">
+
+                        
+                        
+                        <bpel:copy>
+                            <bpel:from><bpel:literal xml:space="preserve"><tns:AutoCheckResponse xmlns:tns="http://autocheck.soacourse.unsw.edu.au" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tns:GSCheck>tns:GSCheck</tns:GSCheck>
+  <tns:result>Error</tns:result>
+</tns:AutoCheckResponse></bpel:literal></bpel:from>
+                            <bpel:to variable="output" part="parameters"></bpel:to>
+                        </bpel:copy>
+                        <bpel:copy>
+                            <bpel:from part="parameters" variable="GSCheckFault">
+                                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[errtext]]></bpel:query>
+                            </bpel:from>
+                            <bpel:to part="parameters" variable="output">
+                                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[tns:GSCheck]]></bpel:query>
+                            </bpel:to>
+                        </bpel:copy>
+                    </bpel:assign><bpel:reply name="replyError" partnerLink="client" operation="AutoCheck" portType="tns:AutoCheck" variable="output"></bpel:reply><bpel:exit name="Exit"></bpel:exit></bpel:sequence></bpel:catch></bpel:invoke>
         
         <bpel:if name="HasPaid">
             <bpel:condition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[$GSCheckOutput.parameters/PaidFlag = "Yes"]]></bpel:condition>
@@ -189,7 +209,33 @@
                  portType="ps:BPELPinkSlipService"
                  operation="VehicleAge"
                  inputVariable="VehicleAgeInput"
-                 outputVariable="VehicleAgeOutput"/>
+                 outputVariable="VehicleAgeOutput"><bpel:catch faultName="ps:ageFault" faultVariable="VehicleAgeFault" faultMessageType="ps:VehicleAgeFaultMsg"><bpel:sequence>
+                            <bpel:assign validate="no" name="setError">
+                                <bpel:copy>
+                                    <bpel:from><bpel:literal xml:space="preserve"><tns:AutoCheckResponse xmlns:tns="http://autocheck.soacourse.unsw.edu.au" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tns:GSCheck>Passed</tns:GSCheck>
+  <tns:AgeCheck>tns:AgeCheck</tns:AgeCheck>
+  <tns:result>Error</tns:result>
+</tns:AutoCheckResponse>
+</bpel:literal></bpel:from>
+                                    <bpel:to variable="output" part="parameters"></bpel:to>
+                                </bpel:copy>
+                                <bpel:copy>
+                                    <bpel:from part="parameters" variable="VehicleAgeFault">
+                                        <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">
+                                            <![CDATA[errtext]]>
+                                        </bpel:query>
+                                    </bpel:from>
+                                    <bpel:to part="parameters" variable="output">
+                                        <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">
+                                            <![CDATA[tns:AgeCheck]]>
+                                        </bpel:query>
+                                    </bpel:to>
+                                </bpel:copy>
+                            </bpel:assign>
+                            <bpel:reply name="replyError" partnerLink="client" operation="AutoCheck" portType="tns:AutoCheck" variable="output"></bpel:reply>
+                            <bpel:exit name="Exit"></bpel:exit>
+                        </bpel:sequence></bpel:catch></bpel:invoke>
                 <bpel:if name="CheckAgeGreaterThan5">
                     <bpel:condition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[$VehicleAgeOutput.parameters/Age > 5]]></bpel:condition>
                     <bpel:sequence name="AgeGreaterThan5">
@@ -230,16 +276,43 @@
                                 </bpel:to>
                             </bpel:copy>
                         </bpel:assign>
+                        
                         <bpel:invoke name="PSCheck"
                         partnerLink="psProvider"
                         operation="PSCheck"
                         inputVariable="PSCheckInput"
                         outputVariable="PSCheckOutput"
                         portType="ps:BPELPinkSlipService">
-                        </bpel:invoke>
+                        <bpel:catch faultName="ps:checkFault" faultVariable="PSCheckFault" faultMessageType="ps:PSCheckFaultMsg"><bpel:sequence>
+                                    <bpel:assign validate="no" name="setError">
+                                        
+                                        <bpel:copy>
+                                            <bpel:from><bpel:literal xml:space="preserve"><tns:AutoCheckResponse xmlns:tns="http://autocheck.soacourse.unsw.edu.au" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tns:GSCheck>Passed</tns:GSCheck>
+  <tns:AgeCheck>Greater than 5 years old</tns:AgeCheck>
+  <tns:PSCheck>tns:PSCheck</tns:PSCheck>
+  <tns:result>Error</tns:result>
+</tns:AutoCheckResponse></bpel:literal></bpel:from>
+                                            <bpel:to variable="output" part="parameters"></bpel:to>
+                                        </bpel:copy>
+                                        <bpel:copy>
+                                            <bpel:from part="parameters" variable="PSCheckFault">
+                                                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[errtext]]></bpel:query>
+                                            </bpel:from>
+                                            <bpel:to part="parameters" variable="output">
+                                                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[tns:PSCheck]]></bpel:query>
+                                            </bpel:to>
+                                        </bpel:copy>
+                                    </bpel:assign>
+                                    <bpel:reply name="replyError" partnerLink="client" operation="AutoCheck" portType="tns:AutoCheck" variable="output"></bpel:reply>
+                                    <bpel:exit name="Exit"></bpel:exit>
+                                </bpel:sequence></bpel:catch></bpel:invoke>
                         <bpel:if name="HasCheckedSafety">
                             <bpel:condition expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[$PSCheckOutput.parameters/CheckedFlag = "Yes"]]></bpel:condition>
                             <bpel:assign validate="no" name="Accept"><bpel:copy><bpel:from><bpel:literal xml:space="preserve"><tns:AutoCheckResponse xmlns:tns="http://autocheck.soacourse.unsw.edu.au" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tns:GSCheck>Passed</tns:GSCheck>
+  <tns:AgeCheck>Greater than 5 years old</tns:AgeCheck>
+  <tns:PSCheck>Passed</tns:PSCheck>  
   <tns:result>Accept</tns:result>
 </tns:AutoCheckResponse></bpel:literal>
                                         
@@ -262,7 +335,10 @@
                                 <bpel:assign validate="no" name="Reject">
                                     <bpel:copy><bpel:from>
                                             <bpel:literal xml:space="preserve"><tns:AutoCheckResponse xmlns:tns="http://autocheck.soacourse.unsw.edu.au" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<tns:result>Reject</tns:result>
+  <tns:GSCheck>Passed</tns:GSCheck>
+  <tns:AgeCheck>Greater than 5 years old</tns:AgeCheck>
+  <tns:PSCheck>Failed</tns:PSCheck>
+  <tns:result>Reject</tns:result>
 </tns:AutoCheckResponse></bpel:literal>
                                         </bpel:from><bpel:to variable="output" part="parameters"></bpel:to>
                 
@@ -283,15 +359,18 @@
                     </bpel:sequence>
                     <bpel:else>
                         <bpel:assign validate="no" name="Accept">
-                    <bpel:copy><bpel:from><bpel:literal xml:space="preserve"><tns:AutoCheckResponse xmlns:tns="http://autocheck.soacourse.unsw.edu.au" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    
+                
+                            <bpel:copy>
+                                <bpel:from><bpel:literal xml:space="preserve"><tns:AutoCheckResponse xmlns:tns="http://autocheck.soacourse.unsw.edu.au" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tns:GSCheck>Passed</tns:GSCheck>
+  <tns:AgeCheck>Less or equal to 5 years old</tns:AgeCheck>
   <tns:result>Accept</tns:result>
-</tns:AutoCheckResponse>
-</bpel:literal></bpel:from>
-                    <bpel:to variable="output" part="parameters"></bpel:to>
-                
-                    </bpel:copy>
-                
-                </bpel:assign>
+</tns:AutoCheckResponse></bpel:literal></bpel:from>
+                                <bpel:to variable="output" part="parameters"></bpel:to>
+                            </bpel:copy>
+                            
+                        </bpel:assign>
                     </bpel:else>
                 </bpel:if>
                 
@@ -300,9 +379,9 @@
             </bpel:sequence>
             <bpel:else>
                 <bpel:assign validate="no" name="Reject"><bpel:copy><bpel:from><bpel:literal xml:space="preserve"><tns:AutoCheckResponse xmlns:tns="http://autocheck.soacourse.unsw.edu.au" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tns:GSCheck>Failed</tns:GSCheck>
   <tns:result>Reject</tns:result>
-</tns:AutoCheckResponse>
-</bpel:literal></bpel:from>
+</tns:AutoCheckResponse></bpel:literal></bpel:from>
                     <bpel:to variable="output" part="parameters"></bpel:to>
                 
             </bpel:copy>

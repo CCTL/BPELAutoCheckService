@@ -56,7 +56,10 @@
             <element name="AutoCheckResponse">
                 <complexType>
                     <sequence>
-                        <element name="result" type="string"/>
+								        <element name="GSCheck" type="string"/>
+								        <element name="AgeCheck" type="string"/>
+								        <element name="PSCheck" type="string"/>
+								        <element name="result" type="string"/>
                     </sequence>
                 </complexType>
             </element>
